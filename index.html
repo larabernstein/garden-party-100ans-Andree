@@ -34,10 +34,23 @@ body::before{
   position:fixed;
   inset:0;
   background:url("assets/background.jpg") center/cover no-repeat;
-  filter: blur(3px) brightness(.7);
+  filter: blur(3px) brightness(.75);
   transform: scale(1.05);
   z-index:-2;
 }
+
+body::before{
+  will-change: transform;
+}
+
+body::after{
+  background: rgba(0,0,0,.45);
+}
+
+body{
+  -webkit-overflow-scrolling: touch;
+}
+
 
 /* léger voile sombre pour élégance */
 body::after{
