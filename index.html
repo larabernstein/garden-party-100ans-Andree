@@ -1,456 +1,254 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🎉 Garden Party 100 ans Andrée 🎉</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg1:#08140f;
-      --bg2:#0c2419;
-      --card:rgba(255,255,255,.08);
-      --line:rgba(255,255,255,.14);
-      --txt:rgba(255,255,255,.94);
-      --muted:rgba(255,255,255,.72);
-      --accent:#fde68a;
-      --accent2:#bbf7d0;
-    }
-    *{box-sizing:border-box}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🎉 Garden Party 100 ans Andrée 🎉</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --card:rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.14);
+  --txt:rgba(255,255,255,.94);
+  --muted:rgba(255,255,255,.72);
+  --accent:#fde68a;
+  --accent2:#bbf7d0;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+html, body{
+  height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+
 body{
-  margin:0;
-  min-height:100vh;
-  color:white;
-  font-family: 'Cormorant Garamond', serif;
+  height:100dvh;
   display:flex;
   flex-direction:column;
-  overflow-x: hidden;
-  overflow-y: auto;
+  font-family:'Cormorant Garamond', serif;
+  color:white;
   position:relative;
 }
 
-/* Photo de fond */
+/* ===== FOND FLOU ===== */
 body::before{
   content:"";
   position:fixed;
   inset:0;
   background:url("assets/BG.jpg") center/cover no-repeat;
-  filter: blur(3px) brightness(.75);
-  transform: scale(1.05);
+  filter:blur(4px) brightness(.75);
+  transform:scale(1.05);
   z-index:-2;
 }
 
-body::before{
-  will-change: transform;
-}
-
-body::after{
-  background: rgba(0,0,0,.45);
-}
-
-body{
-  -webkit-overflow-scrolling: touch;
-}
-
-
-/* léger voile sombre pour élégance */
 body::after{
   content:"";
   position:fixed;
   inset:0;
-  background:linear-gradient(
-    to bottom,
-    rgba(0,0,0,.6),
-   
-  );
+  background:linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.35));
   z-index:-1;
 }
 
-html, body{
-  overscroll-behavior: none;
-  height: 100%;
-  overflow: hidden;
-}
-body{
-  height: 100dvh;
+/* ===== MARQUEE ===== */
+.marquee{
+  position:relative;
+  overflow:hidden;
+  flex:0 0 auto;
+  background:rgba(255,255,255,.03);
+  border-bottom:1px solid rgba(255,255,255,.1);
 }
 
+.marquee.bottom{
+  border-top:1px solid rgba(255,255,255,.1);
+  border-bottom:none;
+}
+
+.track{
+  display:flex;
+  gap:12px;
+  padding:10px;
+  width:max-content;
+  animation:scroll 60s linear infinite;
+  will-change:transform;
+}
+
+.marquee.reverse .track{
+  animation-direction:reverse;
+}
+
+@keyframes scroll{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+
+.photo{
+  height:clamp(55px,10vh,100px);
+  border-radius:14px;
+  object-fit:cover;
+  border:1px solid rgba(255,255,255,.15);
+}
+
+/* ===== CENTRE ===== */
 .main{
-  flex: 1 1 auto;
-  display: grid;
-  place-items: center;
-  padding: clamp(10px, 2vh, 22px);
-  min-height: 0; /* important pour éviter les débordements */
+  flex:1;
+  display:grid;
+  place-items:center;
+  padding:clamp(8px,2vh,16px);
 }
 
 .card{
-  width: min(760px, 100%);
-  max-height: 100%;
-  overflow: hidden; /* pas de scroll interne */
-  padding: clamp(14px, 2.6vh, 26px);
+  width:min(720px,100%);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:clamp(14px,2vh,22px);
+  backdrop-filter:blur(8px);
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
 }
 
-    /* ====== MARQUEE (bandes) ====== */
-    .marquee{
-      position:relative;
-      overflow:hidden;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      flex: 0 0 auto;
-    }
-    .marquee.bottom{
-      border-top:1px solid rgba(255,255,255,.10);
-      border-bottom:none;
-    }
-
-    /* petit fondu élégant sur les côtés */
-    .marquee::before,
-    .marquee::after{
-      content:"";
-      position:absolute; top:0; bottom:0;
-      width:70px;
-      pointer-events:none;
-      z-index:2;
-    }
-    .marquee::before{
-      left:0;
-      background:linear-gradient(to right, rgba(8,20,15,1), rgba(8,20,15,0));
-    }
-    .marquee::after{
-      right:0;
-      background:linear-gradient(to left, rgba(8,20,15,1), rgba(8,20,15,0));
-    }
-
-  .track {
-  display: flex;
-  gap: 12px;
-  padding: 14px;
-  width: max-content;
-  animation-name: scroll;
-  animation-duration: 90s !important;
-  
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-    .marquee.reverse .track{ animation-direction: reverse; }
-
-  
-
-
-    @keyframes scroll{
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); } /* -50% car on duplique la liste */
-    }
-
-    .photo{
-      height:clamp(70px, 12vh, 120px);
-      width:auto;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.25);
-      object-fit:cover;
-      opacity:.92;
-      filter:saturate(1.02) contrast(1.02);
-    }
-
-    /* Option esthétique: photos anciennes un peu plus "douces" */
-    .marquee.top .photo{
-      filter: saturate(.95) contrast(1.02) sepia(.12);
-    }
-
-    /* ====== CARTE CENTRALE ====== */
-    .main{
-      flex:1;
-      display:grid;
-      place-items:center;
-      padding:22px;
-    }
-    .card{
-      width:min(760px, 100%);
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:28px;
-      padding:26px 24px;
-      box-shadow: 0 22px 70px rgba(0,0,0,.40);
-      backdrop-filter: blur(10px);
-      text-align:center;
-    }
-    .badge{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(0,0,0,.18);
-      color:var(--muted);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size:13px;
-      margin-bottom:14px;
-    }
-
-    h1{
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  font-size: clamp(28px, 6vw, 42px);
-  line-height: 1.1;
-}
-    .sub{
-      margin:0 0 18px;
-      color:var(--muted);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      line-height:1.5;
-    }
-    .grid{
-      margin:18px auto 0;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-      text-align:left;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .info{
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      min-height:68px;
-    }
-    .info b{display:block; font-size:12.5px; color:var(--muted); margin-bottom:7px; letter-spacing:.2px}
-    .info span{font-size:15px}
-
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:center;
-      margin-top:18px;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    button,a.btn{
-      cursor:pointer;
-      border:none;
-      padding:12px 14px;
-      border-radius:14px;
-      font-weight:750;
-      color:#0c1711;
-      background:linear-gradient(135deg, var(--accent), var(--accent2));
-      text-decoration:none;
-    }
-    .secondary{
-      background:rgba(255,255,255,.10) !important;
-      color:var(--txt) !important;
-      border:1px solid rgba(255,255,255,.16) !important;
-      font-weight:650 !important;
-    }
-    .note{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:14px;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform:translateX(-50%) translateY(8px);
-      padding:12px 14px;
-      border-radius:14px;
-      background:rgba(0,0,0,.55);
-      border:1px solid rgba(255,255,255,.14);
-      color:var(--txt);
-      opacity:0;
-      transition:.25s ease;
-      pointer-events:none;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
-
-    @media (max-width:720px){
-      h1{font-size:32px}
-      .grid{grid-template-columns:1fr}
-      .photo{height:96px}
-    }
-
-    @media (max-width: 480px){
-  h1{
-    font-size: 30px;
-    letter-spacing: 0px;
-  }
-
-  @media (max-width: 720px){
-  .grid{ grid-template-columns: 1fr; }
-  .actions{ margin-top: 12px; }
-  .badge{ margin-bottom: 10px; }
+.badge{
+  display:inline-flex;
+  gap:8px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(0,0,0,.2);
+  font-family:system-ui;
+  font-size:13px;
+  margin-bottom:10px;
 }
 
-  .main-title{
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
-  font-size: clamp(30px, 6vw, 44px);
-  line-height: 1.12;
-  text-align: center;
-  letter-spacing: 0.3px;
-  margin: 10px 0 12px;
+h1{
+  font-size:clamp(28px,6vw,42px);
+  line-height:1.1;
+  margin-bottom:8px;
 }
 
-.main-title span{
-  font-weight: 700;
+h1 span{font-weight:700;}
+
+.sub{
+  font-family:system-ui;
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:14px;
 }
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  font-family:system-ui;
 }
-  </style>
+
+.info{
+  padding:10px;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  text-align:left;
+}
+
+.info b{
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+
+.actions{
+  margin-top:14px;
+}
+
+a.btn{
+  padding:10px 14px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#111;
+  font-weight:700;
+  text-decoration:none;
+  font-family:system-ui;
+}
+
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr;}
+}
+</style>
 </head>
+
 <body>
 
-  <!-- BANDE HAUT : mamie jeune -->
-  <section class="marquee top" aria-label="Photos de mamie jeune">
-    <div class="track" id="trackYoung"></div>
-  </section>
+<section class="marquee top">
+  <div class="track" id="trackYoung"></div>
+</section>
 
-  <!-- CARTE -->
-  <main class="main">
-    <div class="card">
-      <div class="badge">🎂 <span>Invitation</span> <span>•</span> <span id="eventLabel">100 ans Andrée</span></div>
+<main class="main">
+  <div class="card">
+    <div class="badge">🎂 Invitation • 100 ans Andrée</div>
 
-      <h1 id="title" class="main-title">
-        ✨🎂 Andrée fête<br>
+    <h1>
+      ✨🎂 Andrée fête<br>
       <span>ses 100 ans</span> 🎂✨
-      </h1>
-      <p class="sub" id="subtitle">Venez célébrer un siècle d’histoires, de rires et d’amour.</p>
+    </h1>
 
-      <div class="grid">
-        <div class="info"><b>📅 DATE</b><span id="date">—</span></div>
-        <div class="info"><b>🕒 HEURE</b><span id="time">—</span></div>
-        <div class="info"><b>📍 LIEU</b><span id="place">—</span></div>
-        <div class="info"><b>🌿 INFOS</b><span id="extra">—</span></div>
-      </div>
+    <p class="sub">Venez célébrer un siècle d’histoires, de rires et d’amour</p>
 
-      <div class="actions">
-        <a id="maps" class="btn secondary" target="_blank" rel="noreferrer">Itinéraire</a>
-      </div>
-
-      
+    <div class="grid">
+      <div class="info"><b>📅 DATE</b>Samedi 13 Juin 2026</div>
+      <div class="info"><b>🕒 HEURE</b>12h00</div>
+      <div class="info"><b>📍 LIEU</b>Ora FarmHouse - 63 Rue Manin, Paris</div>
+      <div class="info"><b>🌿 INFOS</b>Votre présence sera le plus beau des cadeaux</div>
     </div>
-  </main>
 
-  <!-- BANDE BAS : mamie aujourd’hui -->
-  <section class="marquee bottom reverse" aria-label="Photos de mamie aujourd'hui">
-    <div class="track" id="trackNow"></div>
-  </section>
+    <div class="actions">
+      <a class="btn" target="_blank"
+         href="https://www.google.com/maps">Itinéraire</a>
+    </div>
 
-  <div class="toast" id="toast">✅ Copié !</div>
+  </div>
+</main>
 
-  <script>
-    /* ========= CONFIG ========= */
-    const CONFIG = {
-      titleHtml: "✨🎂 Andrée fête<br><span>ses 100 ans</span> 🎂✨",
-      subtitle: "Venez célébrer un siècle d’histoires, de rires et d’amour",
-      date: "Samedi 13 Juin 2026",
-      time: "12h00",
-      place: "Ora FarmHouse au Pavillon du Lac - Premier étage, 63 Rue Manin, 75019 Paris",
-      extra: "Votre présence sera le plus beau des cadeaux, rien d'autre !",
-      mapsUrl: "https://www.google.com/maps/place//data=!4m2!3m1!1s0x47e66d849a059edb:0x5eb79d2c1a4e97e3?sa=X&ved=1t:8290&ictx=111",
+<section class="marquee bottom reverse">
+  <div class="track" id="trackNow"></div>
+</section>
 
-      // Liste de photos (haut = jeune, bas = maintenant)
-      youngPhotos: [
-        "assets/old_01.png",
-        "assets/old_02.png",
-        "assets/old_05.png",
-        "assets/old_03.png",
-        "assets/old_04.png",
-        "assets/old_06.png",
-        "assets/old_07.png",
+<script>
+const youngPhotos=[
+"assets/old_01.png",
+"assets/old_02.png",
+"assets/old_03.png",
+"assets/old_04.png",
+"assets/old_05.png",
+"assets/old_06.png",
+"assets/old_07.png"
+];
 
-        <!--Duplication-->
-        "assets/old_01.png",
-        "assets/old_02.png",
-        "assets/old_05.png",
-        "assets/old_03.png",
-        "assets/old_04.png",
-        "assets/old_06.png",
-        "assets/old_07.png",
+const nowPhotos=[
+"assets/new01.jpg",
+"assets/new02.jpg",
+"assets/new03.jpg",
+"assets/new04.jpg",
+"assets/new05.jpg",
+"assets/new06.jpg",
+"assets/new07.jpg"
+];
 
-      ],
-      nowPhotos: [
-        "assets/new01.jpg",
-        "assets/new02.jpg",
-        "assets/new03.jpg",
-        "assets/new04.jpg",
-        "assets/new05.jpg",
-        "assets/new06.jpg",
-        "assets/new07.jpg",
-        "assets/new08.jpg",
-        "assets/new09.jpg",
-        "assets/new10.jpg",
-        "assets/new11.jpg",
+function build(track, photos){
+  const all=[...photos,...photos];
+  for(const src of all){
+    const img=document.createElement("img");
+    img.className="photo";
+    img.src=src;
+    track.appendChild(img);
+  }
+}
 
-        "assets/new01.jpg",
-        "assets/new02.jpg",
-        "assets/new03.jpg",
-        "assets/new04.jpg",
-        "assets/new05.jpg",
-        "assets/new06.jpg",
-        "assets/new07.jpg",
-        "assets/new08.jpg",
-        "assets/new09.jpg",
-        "assets/new10.jpg",
-        "assets/new11.jpg"
-        
-      ],
+build(document.getElementById("trackYoung"),youngPhotos);
+build(document.getElementById("trackNow"),nowPhotos);
+</script>
 
-      // Vitesse (secondes) : plus grand = plus lent
-      speedTop: 42,
-      speedBottom: 38
-    };
-
-    // Injection texte
-    title.innerHTML = CONFIG.titleHtml;
-    subtitle.textContent = CONFIG.subtitle;
-    date.textContent = CONFIG.date;
-    time.textContent = CONFIG.time;
-    place.textContent = CONFIG.place;
-    extra.textContent = CONFIG.extra;
-    maps.href = CONFIG.mapsUrl;
-    
-
-    // Construire une bande qui boucle : on duplique la liste pour que -50% marche
-    function buildMarquee(trackEl, photos, speedSeconds){
-      trackEl.style.animationDuration = `${speedSeconds}s`;
-      const all = [...photos, ...photos]; // duplication
-      for(const src of all){
-        const img = document.createElement("img");
-        img.className = "photo";
-        img.src = src;
-        img.alt = "";
-        trackEl.appendChild(img);
-      }
-      
-    }
-
-    buildMarquee(document.getElementById("trackYoung"), CONFIG.youngPhotos, CONFIG.speedTop);
-    buildMarquee(document.getElementById("trackNow"), CONFIG.nowPhotos, CONFIG.speedBottom);
-
-    // RSVP copie un message prêt
-    const toast = document.getElementById("toast");
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add("show");
-      clearTimeout(showToast.t);
-      showToast.t = setTimeout(()=>toast.classList.remove("show"), 1200);
-    }
-    async function copy(text){
-      try{ await navigator.clipboard.writeText(text); }
-      catch{
-        const ta = document.createElement("textarea");
-        ta.value = text; document.body.appendChild(ta);
-        ta.select(); document.execCommand("copy"); ta.remove();
-      }
-      showToast("✅ Message copié !");
-    }
-
-    
-    
-  </script>
 </body>
 </html>
