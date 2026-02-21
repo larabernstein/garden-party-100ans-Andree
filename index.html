@@ -15,23 +15,30 @@
   --muted:rgba(255,255,255,.72);
   --accent:#fde68a;
   --accent2:#bbf7d0;
+
+  --vh: 1vh;          /* corrigé par JS */
+  --card-scale: 1;    /* ajusté par JS */
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}
 
-html, body{
+html{
+  background:#08140f;
   height:100%;
   overflow:hidden;
   overscroll-behavior:none;
 }
 
 body{
-  height:100dvh;
+  height: calc(var(--vh) * 100);
+  overflow:hidden;
   display:flex;
   flex-direction:column;
   font-family:'Cormorant Garamond', serif;
   color:white;
   position:relative;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ===== FOND FLOU ===== */
@@ -74,6 +81,7 @@ body::after{
   width:max-content;
   animation:scroll 60s linear infinite;
   will-change:transform;
+  transform: translateZ(0);
 }
 
 .marquee.reverse .track{
@@ -81,8 +89,8 @@ body::after{
 }
 
 @keyframes scroll{
-  from{transform:translateX(0);}
-  to{transform:translateX(-50%);}
+  from{transform:translateX(0) translateZ(0);}
+  to{transform:translateX(-50%) translateZ(0);}
 }
 
 .photo{
@@ -95,6 +103,7 @@ body::after{
 /* ===== CENTRE ===== */
 .main{
   flex:1;
+  min-height:0; /* important pour les calculs */
   display:grid;
   place-items:center;
   padding:clamp(8px,2vh,16px);
@@ -109,6 +118,15 @@ body::after{
   backdrop-filter:blur(8px);
   text-align:center;
   box-shadow:0 20px 60px rgba(0,0,0,.4);
+
+  transform: scale(var(--card-scale));
+  transform-origin:center;
+}
+
+.card.is-scroll{
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
+  max-height:100%;
 }
 
 .badge{
@@ -173,84 +191,27 @@ a.btn{
   font-family:system-ui;
 }
 
+/* Mobile: grille 1 colonne */
 @media(max-width:600px){
   .grid{grid-template-columns:1fr;}
 }
 
-/* ===== Compact mode: petits écrans (ex: iPhone 16) ===== */
+/* Compact mode: petits écrans */
 @media (max-height: 740px){
-  .photo{
-    height: clamp(46px, 8vh, 86px); /* bandes moins hautes */
-  }
-
-  .track{
-    padding: 8px;
-    gap: 10px;
-    animation-duration: 70s; /* un poil plus lent, plus smooth */
-  }
-
-  .main{
-    padding: 10px;
-  }
-
-  .card{
-    padding: 14px;
-    border-radius: 20px;
-  }
-
-  h1{
-    font-size: clamp(24px, 5.5vw, 36px);
-    line-height: 1.08;
-    margin-bottom: 6px;
-  }
-
-  .sub{
-    font-size: 13px;
-    margin-bottom: 10px;
-  }
-
-  .grid{
-    gap: 8px;
-  }
-
-  .info{
-    padding: 9px 10px;
-  }
-
-  .actions{
-    margin-top: 10px;
-  }
-
-  a.btn{
-    padding: 9px 12px;
-    border-radius: 11px;
-  }
+  .photo{ height: clamp(46px, 8vh, 86px); }
+  .track{ padding: 8px; gap: 10px; animation-duration: 70s; }
+  .card{ padding: 14px; border-radius: 20px; }
+  h1{ font-size: clamp(24px, 5.5vw, 36px); margin-bottom: 6px; }
+  .sub{ font-size: 13px; margin-bottom: 10px; }
+  .grid{ gap: 8px; }
+  .info{ padding: 9px 10px; }
+  .actions{ margin-top: 10px; }
+  a.btn{ padding: 9px 12px; border-radius: 11px; }
 }
 
 @media (max-height: 700px){
-  .badge{ display:none; } /* optionnel : gagne de la place */
+  .badge{ display:none; }
 }
-
-/* Safe-area (encoches) + base */
-body{
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* La carte peut se “scaler” si besoin */
-.card{
-  transform: scale(var(--card-scale, 1));
-  transform-origin: center;
-}
-
-/* Si on doit scroller, on le fera dans la carte (pas sur la page) */
-.card.is-scroll{
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Empêche un pixel blanc/bounce */
-html{ background:#08140f; }
 </style>
 </head>
 
@@ -261,7 +222,7 @@ html{ background:#08140f; }
 </section>
 
 <main class="main">
-  <div class="card">
+  <div class="card" id="card">
     <div class="badge">🎂 Invitation • 100 ans Andrée</div>
 
     <h1>
@@ -279,10 +240,9 @@ html{ background:#08140f; }
     </div>
 
     <div class="actions">
-      <a class="btn" target="_blank"
+      <a class="btn" target="_blank" rel="noreferrer"
          href="https://www.google.com/maps">Itinéraire</a>
     </div>
-
   </div>
 </main>
 
@@ -291,136 +251,93 @@ html{ background:#08140f; }
 </section>
 
 <script>
+/* ---------- PHOTOS (1 seule liste, pas de doublons) ---------- */
 const youngPhotos=[
-"assets/old_01.png",
-"assets/old_02.png",
-"assets/old_03.png",
-"assets/old_04.png",
-"assets/old_05.png",
-"assets/old_06.png",
-"assets/old_07.png",
-"assets/old_01.png",
-"assets/old_02.png",
-"assets/old_03.png",
-"assets/old_04.png",
-"assets/old_05.png",
-"assets/old_06.png",
-"assets/old_07.png",
-"assets/old_01.png",
-"assets/old_02.png",
-"assets/old_03.png",
-"assets/old_04.png",
-"assets/old_05.png",
-"assets/old_06.png",
-"assets/old_07.png",
-"assets/old_01.png",
-"assets/old_02.png",
-"assets/old_03.png",
-"assets/old_04.png",
-"assets/old_05.png",
-"assets/old_06.png",
-"assets/old_07.png"
+  "assets/old_01.png",
+  "assets/old_02.png",
+  "assets/old_03.png",
+  "assets/old_04.png",
+  "assets/old_05.png",
+  "assets/old_06.png",
+  "assets/old_07.png"
 ];
 
 const nowPhotos=[
-"assets/new01.jpg",
-"assets/new02.jpg",
-"assets/new03.jpg",
-"assets/new04.jpg",
-"assets/new05.jpg",
-"assets/new06.jpg",
-"assets/new07.jpg",
-"assets/new01.jpg",
-"assets/new02.jpg",
-"assets/new03.jpg",
-"assets/new04.jpg",
-"assets/new05.jpg",
-"assets/new06.jpg",
-"assets/new07.jpg",
-"assets/new01.jpg",
-"assets/new02.jpg",
-"assets/new03.jpg",
-"assets/new04.jpg",
-"assets/new05.jpg",
-"assets/new06.jpg",
-"assets/new07.jpg",
-"assets/new01.jpg",
-"assets/new02.jpg",
-"assets/new03.jpg",
-"assets/new04.jpg",
-"assets/new05.jpg",
-"assets/new06.jpg",
-"assets/new07.jpg"
+  "assets/new01.jpg",
+  "assets/new02.jpg",
+  "assets/new03.jpg",
+  "assets/new04.jpg",
+  "assets/new05.jpg",
+  "assets/new06.jpg",
+  "assets/new07.jpg",
+  "assets/new08.jpg",
+  "assets/new10.jpg",
+  "assets/new11.jpg"
+
 ];
 
-function build(track, photos){
-  const all=[...photos,...photos];
+/* ---------- MARQUEE: répète assez pour remplir + duplique x2 pour -50% ---------- */
+function buildMarquee(trackEl, photos){
+  trackEl.innerHTML = "";
+  const repeats = Math.max(6, Math.ceil(window.innerWidth / 260)); // densité auto
+  const list = [];
+  for(let i=0;i<repeats;i++) list.push(...photos);
+
+  const all = [...list, ...list]; // 2 groupes identiques
   for(const src of all){
-    const img=document.createElement("img");
-    img.className="photo";
-    img.src=src;
-    track.appendChild(img);
+    const img = document.createElement("img");
+    img.className = "photo";
+    img.src = src;
+    img.alt = "";
+    trackEl.appendChild(img);
   }
 }
 
-build(document.getElementById("trackYoung"),youngPhotos);
-build(document.getElementById("trackNow"),nowPhotos);
-</script>
-
-<script>
-(function autoFitCard(){
+/* ---------- VIEWPORT stable + auto-fit card ---------- */
+(function(){
+  const root = document.documentElement;
   const main = document.querySelector('.main');
-  const card = document.querySelector('.card');
-  if(!main || !card) return;
+  const card = document.getElementById('card');
 
-  function fit(){
-    // reset
-    card.classList.remove('is-scroll');
-    document.documentElement.style.setProperty('--card-scale', 1);
-
-    // hauteur dispo au centre (entre les 2 bandes)
-    const mainRect = main.getBoundingClientRect();
-
-    // hauteur réelle de la carte
-    const cardRect = card.getBoundingClientRect();
-
-    // Si ça dépasse, on scale
-    const available = mainRect.height;
-    const needed = cardRect.height;
-
-    // marge de sécurité (petit “air”)
-    const safety = 10;
-    const ratio = (available - safety) / needed;
-
-    // on limite le scale : pas trop petit sinon illisible
-    const minScale = 0.86;
-
-    if (ratio < 1) {
-      const scale = Math.max(minScale, ratio);
-      document.documentElement.style.setProperty('--card-scale', scale);
-
-      // Re-mesure après scale via rAF (layout stable)
-      requestAnimationFrame(() => {
-        const newNeeded = card.getBoundingClientRect().height;
-        if (newNeeded > available - safety) {
-          // si même à minScale ça rentre pas, on autorise un petit scroll interne
-          card.classList.add('is-scroll');
-        }
-      });
-    }
+  function setVH(){
+    root.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
   }
 
-  // 1) au chargement
-  window.addEventListener('load', fit);
+  function fitCard(){
+    if(!main || !card) return;
 
-  // 2) au resize (barre safari qui bouge, orientation, etc.)
+    // reset
+    card.classList.remove('is-scroll');
+    root.style.setProperty('--card-scale', 1);
+
+    const available = main.getBoundingClientRect().height - 10;
+    const needed = card.getBoundingClientRect().height;
+
+    if (needed <= available) return;
+
+    const minScale = 0.86;
+    const scale = Math.max(minScale, available / needed);
+    root.style.setProperty('--card-scale', scale);
+
+    requestAnimationFrame(() => {
+      const after = card.getBoundingClientRect().height;
+      if (after > available) card.classList.add('is-scroll');
+    });
+  }
+
+  function refresh(){
+    setVH();
+    buildMarquee(document.getElementById("trackYoung"), youngPhotos);
+    buildMarquee(document.getElementById("trackNow"), nowPhotos);
+    fitCard();
+  }
+
+  window.addEventListener('load', refresh);
   window.addEventListener('resize', () => {
-    clearTimeout(window.__fitT);
-    window.__fitT = setTimeout(fit, 80);
+    clearTimeout(window.__r);
+    window.__r = setTimeout(refresh, 120);
   });
-
-  // 3) au retour en haut / focus, Safari peut changer la hauteur
-  window.addEventListener('orientationchange', () => setTimeout(fit, 150));
+  window.addEventListener('orientationchange', () => setTimeout(refresh, 200));
 })();
 </script>
 
