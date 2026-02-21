@@ -92,7 +92,10 @@ body::after{
   gap:12px;
   padding:10px;
   width:max-content;
-  animation:scroll 110s linear infinite;
+  animation-name: scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+/* durée définie en JS */
   will-change:transform;
   transform: translateZ(0);
 }
@@ -384,20 +387,32 @@ const nowPhotos=[
 ];
 
 /* ---------- MARQUEE: répète assez pour remplir + duplique x2 pour -50% ---------- */
-function buildMarquee(trackEl, photos){
+function buildMarquee(trackEl, photos, pxPerSecond = 22){
   trackEl.innerHTML = "";
-  const repeats = Math.max(6, Math.ceil(window.innerWidth / 260)); // densité auto
+
+  // Remplir une première fois suffisamment large
+  const repeats = Math.max(6, Math.ceil(window.innerWidth / 260));
   const list = [];
   for(let i=0;i<repeats;i++) list.push(...photos);
 
-  const all = [...list, ...list]; // 2 groupes identiques
+  // 2 groupes identiques => on peut scroller de -50%
+  const all = [...list, ...list];
+
   for(const src of all){
-    const img=document.createElement("img");
-    img.className="photo";
-    img.src=src;
-    img.alt="";
+    const img = document.createElement("img");
+    img.className = "photo";
+    img.src = src;
+    img.alt = "";
     trackEl.appendChild(img);
   }
+
+  // Durée = largeur d'un groupe / vitesse (px/s)
+  // (on attend que le layout soit calculé)
+  requestAnimationFrame(() => {
+    const groupWidth = trackEl.scrollWidth / 2;
+    const seconds = groupWidth / pxPerSecond;
+    trackEl.style.animationDuration = `${Math.max(40, seconds)}s`;
+  });
 }
 
 /* ---------- VIEWPORT stable + auto-fit card ---------- */
@@ -433,8 +448,8 @@ function buildMarquee(trackEl, photos){
 
   function refresh(){
     setVH();
-    buildMarquee(document.getElementById("trackYoung"), youngPhotos);
-    buildMarquee(document.getElementById("trackNow"), nowPhotos);
+    buildMarquee(document.getElementById("trackYoung"), youngPhotos, 18); // très lent
+    buildMarquee(document.getElementById("trackNow"),  nowPhotos,  20);   // un poil plus rapide
     fitCard();
   }
 
