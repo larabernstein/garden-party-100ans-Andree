@@ -243,7 +243,7 @@ a.btn{
       <span>ses 100 ans</span> 🎂✨
     </h1>
 
-    <p class="sub">Venez célébrer un siècle d’histoires, de rires et d’amour</p>
+    <p class="sub">Venez célébrer avec nous son anniversaire</p>
 
     <div class="grid">
       <div class="info"><b>📅 DATE</b>Samedi 13 Juin 2026</div>
@@ -355,23 +355,31 @@ function buildMarquee(trackEl, photos){
 })();
 </script>
 
-function enableInteractiveMarquee(marqueeEl){
-  const track = marqueeEl.querySelector('.track');
-  let paused = false;
+<script>
+  // ton script buildMarquee / autoFit ici
+</script>
 
-  marqueeEl.addEventListener('click', () => {
-    paused = !paused;
-    marqueeEl.classList.toggle('paused', paused);
-    track.style.animationPlayState = paused ? 'paused' : 'running';
+<script>
+  function enableInteractiveMarquee(marqueeEl){
+    const track = marqueeEl.querySelector('.track');
+    let paused = false;
 
-    // quand on relance, on revient au scroll normal
-    if(!paused){
-      marqueeEl.scrollLeft = 0;
-    }
-  });
-}
+    marqueeEl.addEventListener('click', () => {
+      paused = !paused;
+      marqueeEl.classList.toggle('paused', paused);
+      track.style.animationPlayState = paused ? 'paused' : 'running';
 
-enableInteractiveMarquee(document.querySelector('.marquee.top'));
-enableInteractiveMarquee(document.querySelector('.marquee.bottom'));
+      if(!paused){
+        marqueeEl.scrollLeft = 0;
+      }
+    });
+  }
+
+  enableInteractiveMarquee(document.querySelector('.marquee.top'));
+  enableInteractiveMarquee(document.querySelector('.marquee.bottom'));
+</script>
+
+</body>
+</html>
 </body>
 </html>
