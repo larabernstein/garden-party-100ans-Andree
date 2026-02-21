@@ -47,7 +47,7 @@ body::before{
   position:fixed;
   inset:0;
   background:url("assets/BG.jpg") center/cover no-repeat;
-  filter:blur(4px) brightness(.75);
+  filter:blur(2px) brightness(.75);
   transform:scale(1.05);
   z-index:-2;
 }
@@ -72,6 +72,19 @@ body::after{
 .marquee.bottom{
   border-top:1px solid rgba(255,255,255,.1);
   border-bottom:none;
+}
+
+/* Quand c'est en pause, on autorise le swipe horizontal */
+.marquee.paused{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+.marquee.paused::-webkit-scrollbar{ display:none; }
+
+.marquee.paused .track{
+  animation-play-state: paused;
 }
 
 .track{
@@ -342,5 +355,23 @@ function buildMarquee(trackEl, photos){
 })();
 </script>
 
+function enableInteractiveMarquee(marqueeEl){
+  const track = marqueeEl.querySelector('.track');
+  let paused = false;
+
+  marqueeEl.addEventListener('click', () => {
+    paused = !paused;
+    marqueeEl.classList.toggle('paused', paused);
+    track.style.animationPlayState = paused ? 'paused' : 'running';
+
+    // quand on relance, on revient au scroll normal
+    if(!paused){
+      marqueeEl.scrollLeft = 0;
+    }
+  });
+}
+
+enableInteractiveMarquee(document.querySelector('.marquee.top'));
+enableInteractiveMarquee(document.querySelector('.marquee.bottom'));
 </body>
 </html>
