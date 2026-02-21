@@ -34,7 +34,7 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
-  background:url("assets/background.jpg") center/cover no-repeat;
+  background:url("assets/BG.jpg") center/cover no-repeat;
   filter: blur(3px) brightness(.75);
   transform: scale(1.05);
   z-index:-2;
@@ -256,6 +256,13 @@ html, body{
       .grid{grid-template-columns:1fr}
       .photo{height:96px}
     }
+
+    @media (max-width: 480px){
+  h1{
+    font-size: 30px;
+    letter-spacing: 0px;
+  }
+}
   </style>
 </head>
 <body>
