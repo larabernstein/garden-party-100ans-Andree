@@ -277,7 +277,10 @@ html, body{
     <div class="card">
       <div class="badge">🎂 <span>Invitation</span> <span>•</span> <span id="eventLabel">100 ans Andrée</span></div>
 
-      <h1 id="title">Les 100 ans de Mamie ✨</h1>
+      <h1 id="title" class="main-title">
+        ✨🎂 Andrée fête<br>
+      <span>ses 100 ans</span> ✨🎂
+      </h1>
       <p class="sub" id="subtitle">Venez célébrer un siècle d’histoires, de rires et d’amour.</p>
 
       <div class="grid">
@@ -305,7 +308,7 @@ html, body{
   <script>
     /* ========= CONFIG ========= */
     const CONFIG = {
-      title: "✨🎂 Andrée fête ses 100 ans 🎂✨",
+      titleHtml: "✨🎂 Andrée fête<br><span>ses 100 ans</span> ✨🎂",
       subtitle: "Venez célébrer un siècle d’histoires, de rires et d’amour",
       date: "Samedi 13 Juin 2026",
       time: "12h00",
@@ -366,7 +369,7 @@ html, body{
     };
 
     // Injection texte
-    title.textContent = CONFIG.title;
+    title.innerHTML = CONFIG.titleHtml;
     subtitle.textContent = CONFIG.subtitle;
     date.textContent = CONFIG.date;
     time.textContent = CONFIG.time;
