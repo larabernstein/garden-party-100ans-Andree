@@ -176,6 +176,81 @@ a.btn{
 @media(max-width:600px){
   .grid{grid-template-columns:1fr;}
 }
+
+/* ===== Compact mode: petits écrans (ex: iPhone 16) ===== */
+@media (max-height: 740px){
+  .photo{
+    height: clamp(46px, 8vh, 86px); /* bandes moins hautes */
+  }
+
+  .track{
+    padding: 8px;
+    gap: 10px;
+    animation-duration: 70s; /* un poil plus lent, plus smooth */
+  }
+
+  .main{
+    padding: 10px;
+  }
+
+  .card{
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  h1{
+    font-size: clamp(24px, 5.5vw, 36px);
+    line-height: 1.08;
+    margin-bottom: 6px;
+  }
+
+  .sub{
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .grid{
+    gap: 8px;
+  }
+
+  .info{
+    padding: 9px 10px;
+  }
+
+  .actions{
+    margin-top: 10px;
+  }
+
+  a.btn{
+    padding: 9px 12px;
+    border-radius: 11px;
+  }
+}
+
+@media (max-height: 700px){
+  .badge{ display:none; } /* optionnel : gagne de la place */
+}
+
+/* Safe-area (encoches) + base */
+body{
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* La carte peut se “scaler” si besoin */
+.card{
+  transform: scale(var(--card-scale, 1));
+  transform-origin: center;
+}
+
+/* Si on doit scroller, on le fera dans la carte (pas sur la page) */
+.card.is-scroll{
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Empêche un pixel blanc/bounce */
+html{ background:#08140f; }
 </style>
 </head>
 
@@ -223,10 +298,52 @@ const youngPhotos=[
 "assets/old_04.png",
 "assets/old_05.png",
 "assets/old_06.png",
+"assets/old_07.png",
+"assets/old_01.png",
+"assets/old_02.png",
+"assets/old_03.png",
+"assets/old_04.png",
+"assets/old_05.png",
+"assets/old_06.png",
+"assets/old_07.png",
+"assets/old_01.png",
+"assets/old_02.png",
+"assets/old_03.png",
+"assets/old_04.png",
+"assets/old_05.png",
+"assets/old_06.png",
+"assets/old_07.png",
+"assets/old_01.png",
+"assets/old_02.png",
+"assets/old_03.png",
+"assets/old_04.png",
+"assets/old_05.png",
+"assets/old_06.png",
 "assets/old_07.png"
 ];
 
 const nowPhotos=[
+"assets/new01.jpg",
+"assets/new02.jpg",
+"assets/new03.jpg",
+"assets/new04.jpg",
+"assets/new05.jpg",
+"assets/new06.jpg",
+"assets/new07.jpg",
+"assets/new01.jpg",
+"assets/new02.jpg",
+"assets/new03.jpg",
+"assets/new04.jpg",
+"assets/new05.jpg",
+"assets/new06.jpg",
+"assets/new07.jpg",
+"assets/new01.jpg",
+"assets/new02.jpg",
+"assets/new03.jpg",
+"assets/new04.jpg",
+"assets/new05.jpg",
+"assets/new06.jpg",
+"assets/new07.jpg",
 "assets/new01.jpg",
 "assets/new02.jpg",
 "assets/new03.jpg",
@@ -248,6 +365,63 @@ function build(track, photos){
 
 build(document.getElementById("trackYoung"),youngPhotos);
 build(document.getElementById("trackNow"),nowPhotos);
+</script>
+
+<script>
+(function autoFitCard(){
+  const main = document.querySelector('.main');
+  const card = document.querySelector('.card');
+  if(!main || !card) return;
+
+  function fit(){
+    // reset
+    card.classList.remove('is-scroll');
+    document.documentElement.style.setProperty('--card-scale', 1);
+
+    // hauteur dispo au centre (entre les 2 bandes)
+    const mainRect = main.getBoundingClientRect();
+
+    // hauteur réelle de la carte
+    const cardRect = card.getBoundingClientRect();
+
+    // Si ça dépasse, on scale
+    const available = mainRect.height;
+    const needed = cardRect.height;
+
+    // marge de sécurité (petit “air”)
+    const safety = 10;
+    const ratio = (available - safety) / needed;
+
+    // on limite le scale : pas trop petit sinon illisible
+    const minScale = 0.86;
+
+    if (ratio < 1) {
+      const scale = Math.max(minScale, ratio);
+      document.documentElement.style.setProperty('--card-scale', scale);
+
+      // Re-mesure après scale via rAF (layout stable)
+      requestAnimationFrame(() => {
+        const newNeeded = card.getBoundingClientRect().height;
+        if (newNeeded > available - safety) {
+          // si même à minScale ça rentre pas, on autorise un petit scroll interne
+          card.classList.add('is-scroll');
+        }
+      });
+    }
+  }
+
+  // 1) au chargement
+  window.addEventListener('load', fit);
+
+  // 2) au resize (barre safari qui bouge, orientation, etc.)
+  window.addEventListener('resize', () => {
+    clearTimeout(window.__fitT);
+    window.__fitT = setTimeout(fit, 80);
+  });
+
+  // 3) au retour en haut / focus, Safari peut changer la hauteur
+  window.addEventListener('orientationchange', () => setTimeout(fit, 150));
+})();
 </script>
 
 </body>
