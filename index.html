@@ -172,13 +172,13 @@ html, body{
       font-size:13px;
       margin-bottom:14px;
     }
+
     h1{
-      margin:0 0 10px;
-      font-size:40px;
-      letter-spacing: 1px;
-      line-height:1.05;
-      font-weight: 600;
-    }
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: clamp(28px, 6vw, 42px);
+  line-height: 1.1;
+}
     .sub{
       margin:0 0 18px;
       color:var(--muted);
@@ -281,9 +281,6 @@ html, body{
       </div>
 
       <div class="actions">
-        <button id="yes">Je viens ✅</button>
-        <button id="maybe" class="secondary">Je te dis vite 🤝</button>
-        <button id="no" class="secondary">Je ne peux pas 😢</button>
         <a id="maps" class="btn secondary" target="_blank" rel="noreferrer">Itinéraire</a>
       </div>
 
@@ -301,11 +298,11 @@ html, body{
   <script>
     /* ========= CONFIG ========= */
     const CONFIG = {
-      title: "✨ Andrée fête ses 100 ans ✨",
+      title: "✨🎂 Andrée fête ses 100 ans 🎂✨",
       subtitle: "Venez célébrer un siècle d’histoires, de rires et d’amour",
       date: "Samedi 13 Juin 2026",
       time: "12h00",
-      place: "Ora FarmHouse au Pavillon du Lac - Premier étage",
+      place: "Ora FarmHouse au Pavillon du Lac - Premier étage, 63 Rue Manin, 75019 Paris",
       extra: "Votre présence sera le plus beau des cadeaux, rien d'autre !",
       mapsUrl: "https://www.google.com/maps/place//data=!4m2!3m1!1s0x47e66d849a059edb:0x5eb79d2c1a4e97e3?sa=X&ved=1t:8290&ictx=111",
 
@@ -406,9 +403,8 @@ html, body{
       showToast("✅ Message copié !");
     }
 
-    yes.onclick = () => copy(`Coucou ! ✅ Je viens pour les 100 ans de Mamie le ${CONFIG.date} à ${CONFIG.time} 🎂`);
-    maybe.onclick = () => copy(`Coucou ! 🤝 Je te confirme très vite pour le ${CONFIG.date} 😊`);
-    no.onclick = () => copy(`Coucou ! 😢 Je ne peux pas venir le ${CONFIG.date}, mais je pense fort à vous ❤️`);
+    
+    
   </script>
 </body>
 </html>
