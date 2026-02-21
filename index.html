@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🎉 Garden Party 100 ans Andrée 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg1:#08140f;
@@ -20,7 +21,7 @@ body{
   margin:0;
   min-height:100vh;
   color:white;
-  font-family: ui-serif, Georgia, serif;
+  font-family: 'Cormorant Garamond', serif;
   display:flex;
   flex-direction:column;
   overflow-x: hidden;
@@ -174,8 +175,9 @@ html, body{
     h1{
       margin:0 0 10px;
       font-size:40px;
-      letter-spacing:-.6px;
+      letter-spacing: 1px;
       line-height:1.05;
+      font-weight: 600;
     }
     .sub{
       margin:0 0 18px;
@@ -266,7 +268,7 @@ html, body{
   <!-- CARTE -->
   <main class="main">
     <div class="card">
-      <div class="badge">🎂 <span>Invitation</span> <span>•</span> <span id="eventLabel">100 ans</span></div>
+      <div class="badge">🎂 <span>Invitation</span> <span>•</span> <span id="eventLabel">100 ans Andrée</span></div>
 
       <h1 id="title">Les 100 ans de Mamie ✨</h1>
       <p class="sub" id="subtitle">Venez célébrer un siècle d’histoires, de rires et d’amour.</p>
@@ -285,7 +287,7 @@ html, body{
         <a id="maps" class="btn secondary" target="_blank" rel="noreferrer">Itinéraire</a>
       </div>
 
-      <p class="note" id="note">Réponse souhaitée avant le —. (Réponds par message 😉)</p>
+      
     </div>
   </main>
 
@@ -305,8 +307,6 @@ html, body{
       time: "12h00",
       place: "Ora FarmHouse au Pavillon du Lac - Premier étage",
       extra: "Votre présence sera le plus beau des cadeaux, rien d'autre !",
-      rsvpDate: "To be confirmed",
-      contact: "SMS / WhatsApp",
       mapsUrl: "https://www.google.com/maps/place//data=!4m2!3m1!1s0x47e66d849a059edb:0x5eb79d2c1a4e97e3?sa=X&ved=1t:8290&ictx=111",
 
       // Liste de photos (haut = jeune, bas = maintenant)
@@ -369,7 +369,7 @@ html, body{
     place.textContent = CONFIG.place;
     extra.textContent = CONFIG.extra;
     maps.href = CONFIG.mapsUrl;
-    note.innerHTML = `Réponse souhaitée avant le <b>${CONFIG.rsvpDate}</b>. (Réponds via <b>${CONFIG.contact}</b> 😉)`;
+    
 
     // Construire une bande qui boucle : on duplique la liste pour que -50% marche
     function buildMarquee(trackEl, photos, speedSeconds){
