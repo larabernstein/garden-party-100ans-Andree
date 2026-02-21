@@ -111,12 +111,14 @@ body::after{
   border-radius:14px;
   object-fit:cover;
   border:1px solid rgba(255,255,255,.15);
+  user-select:none;
+  -webkit-user-drag:none;
 }
 
 /* ===== CENTRE ===== */
 .main{
   flex:1;
-  min-height:0; /* important pour les calculs */
+  min-height:0;
   display:grid;
   place-items:center;
   padding:clamp(8px,2vh,16px);
@@ -225,12 +227,61 @@ a.btn{
 @media (max-height: 700px){
   .badge{ display:none; }
 }
+
+/* ===== Lightbox plein écran ===== */
+.lightbox{
+  position: fixed;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: rgba(0,0,0,.78);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  padding: 18px;
+}
+
+.lightbox.open{
+  display: grid;
+}
+
+.lb-img{
+  max-width: min(96vw, 900px);
+  max-height: 86vh;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  object-fit: contain;
+  background: rgba(255,255,255,.06);
+}
+
+.lb-close{
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.45);
+  color: white;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lb-hint{
+  position: absolute;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  color: rgba(255,255,255,.75);
+  font-family: system-ui;
+  font-size: 13px;
+}
 </style>
 </head>
 
 <body>
 
-<section class="marquee top">
+<section class="marquee top" aria-label="Photos d'Andrée jeune">
   <div class="track" id="trackYoung"></div>
 </section>
 
@@ -250,7 +301,7 @@ a.btn{
       <div class="info"><b>🕒 HEURE</b>12h00</div>
       <div class="info"><b>📍 LIEU</b>Ora FarmHouse - 63 Rue Manin, Paris</div>
       <div class="info"><b>🌿 INFOS</b>Votre présence sera le plus beau des cadeaux</div>
-      <div class="RSVP"><b>🎉 RSVP</b> Avec nombre de personnes</div>
+      <div class="info"><b>🎉 RSVP</b>Merci d’indiquer le nombre de personnes</div>
     </div>
 
     <div class="actions">
@@ -260,14 +311,35 @@ a.btn{
   </div>
 </main>
 
-<section class="marquee bottom reverse">
+<section class="marquee bottom reverse" aria-label="Photos d'Andrée aujourd'hui">
   <div class="track" id="trackNow"></div>
 </section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" id="lbClose" aria-label="Fermer">✕</button>
+  <img class="lb-img" id="lbImg" alt="">
+  <div class="lb-hint">Touchez ✕ ou le fond pour fermer</div>
+</div>
 
 <script>
 /* ---------- PHOTOS (1 seule liste, pas de doublons) ---------- */
 const youngPhotos=[
   "assets/old_01.png",
+  "assets/old_02.png",
+  "assets/old_03.png",
+  "assets/old_04.png",
+  "assets/old_05.png",
+  "assets/old_06.png",
+  "assets/old_07.png",
+   "assets/old_01.png",
+  "assets/old_02.png",
+  "assets/old_03.png",
+  "assets/old_04.png",
+  "assets/old_05.png",
+  "assets/old_06.png",
+  "assets/old_07.png",
+   "assets/old_01.png",
   "assets/old_02.png",
   "assets/old_03.png",
   "assets/old_04.png",
@@ -286,7 +358,28 @@ const nowPhotos=[
   "assets/new07.jpg",
   "assets/new08.jpg",
   "assets/new10.jpg",
+  "assets/new11.jpg",
+  "assets/new01.jpg",
+  "assets/new02.jpg",
+  "assets/new03.jpg",
+  "assets/new04.jpg",
+  "assets/new05.jpg",
+  "assets/new06.jpg",
+  "assets/new07.jpg",
+  "assets/new08.jpg",
+  "assets/new10.jpg",
+  "assets/new11.jpg",
+  "assets/new01.jpg",
+  "assets/new02.jpg",
+  "assets/new03.jpg",
+  "assets/new04.jpg",
+  "assets/new05.jpg",
+  "assets/new06.jpg",
+  "assets/new07.jpg",
+  "assets/new08.jpg",
+  "assets/new10.jpg",
   "assets/new11.jpg"
+
 
 ];
 
@@ -299,10 +392,10 @@ function buildMarquee(trackEl, photos){
 
   const all = [...list, ...list]; // 2 groupes identiques
   for(const src of all){
-    const img = document.createElement("img");
-    img.className = "photo";
-    img.src = src;
-    img.alt = "";
+    const img=document.createElement("img");
+    img.className="photo";
+    img.src=src;
+    img.alt="";
     trackEl.appendChild(img);
   }
 }
@@ -320,7 +413,6 @@ function buildMarquee(trackEl, photos){
   function fitCard(){
     if(!main || !card) return;
 
-    // reset
     card.classList.remove('is-scroll');
     root.style.setProperty('--card-scale', 1);
 
@@ -353,33 +445,63 @@ function buildMarquee(trackEl, photos){
   });
   window.addEventListener('orientationchange', () => setTimeout(refresh, 200));
 })();
-</script>
 
-<script>
-  // ton script buildMarquee / autoFit ici
-</script>
+/* ---------- Pause au tap (sauf si tap sur photo) ---------- */
+function enableInteractiveMarquee(marqueeEl){
+  const track = marqueeEl.querySelector('.track');
+  let paused = false;
 
-<script>
-  function enableInteractiveMarquee(marqueeEl){
-    const track = marqueeEl.querySelector('.track');
-    let paused = false;
+  marqueeEl.addEventListener('click', (e) => {
+    // Si on clique sur une photo, on ne toggle pas pause
+    if (e.target.closest('img.photo')) return;
 
-    marqueeEl.addEventListener('click', () => {
-      paused = !paused;
-      marqueeEl.classList.toggle('paused', paused);
-      track.style.animationPlayState = paused ? 'paused' : 'running';
+    paused = !paused;
+    marqueeEl.classList.toggle('paused', paused);
+    track.style.animationPlayState = paused ? 'paused' : 'running';
 
-      if(!paused){
-        marqueeEl.scrollLeft = 0;
-      }
-    });
+    if(!paused){
+      marqueeEl.scrollLeft = 0;
+    }
+  });
+}
+
+enableInteractiveMarquee(document.querySelector('.marquee.top'));
+enableInteractiveMarquee(document.querySelector('.marquee.bottom'));
+
+/* ---------- Lightbox: tap photo => plein écran ---------- */
+(function enableLightbox(){
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbClose = document.getElementById('lbClose');
+
+  function open(src){
+    lbImg.src = src;
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
   }
 
-  enableInteractiveMarquee(document.querySelector('.marquee.top'));
-  enableInteractiveMarquee(document.querySelector('.marquee.bottom'));
+  function close(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lbImg.src = "";
+  }
+
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest('img.photo');
+    if(!img) return;
+    open(img.src);
+  });
+
+  lbClose.addEventListener('click', close);
+  lightbox.addEventListener('click', (e) => {
+    if(e.target === lightbox) close();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') close();
+  });
+})();
 </script>
 
-</body>
-</html>
 </body>
 </html>
